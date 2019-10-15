@@ -3,7 +3,10 @@ methodoverride=require("method-override"),
 bodyparser=require("body-parser"),
 mongoose=require("mongoose"),
 app=express();
-
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 mongoose.connect("mongodb://localhost/restful_blog_app");
 app.set("view engine","ejs")
 app.use(express.static("public"))
@@ -88,7 +91,8 @@ app.get("/blogs/:id",function(req,res){
 
 //EDIT ROute
 app.get("/blogs/:id/edit",function(req,res){
-    Blog.findById(req.params.id, function(err,foundblog){
+    //res.send("edit"+req.params.id);
+ Blog.findById(req.params.id, function(err,foundblog){
        if(err)
        {
            res.redirect("/blogs");
@@ -109,7 +113,7 @@ app.get("/blogs/:id/edit",function(req,res){
 app.put("/blogs/:id",function(req,res){
    // res.send("Updated route"+req.params.id+req.body.blog);
     //res.redirect("/blogs/"+req.params.id);
-   Blog.findByIdAndRemove(req.params.id,function(err,updatedblog){
+   Blog.findByIdAndUpdate(req.params.id,req.body.blog,{new: true},function(err,updatedblog){
         
         if(err)
         {
@@ -117,7 +121,7 @@ app.put("/blogs/:id",function(req,res){
         }
         else
         {
-        res.redirect("/blogs");
+        res.redirect("/blogs/"+req.params.id);
             
         }
         
@@ -136,7 +140,7 @@ app.delete("/blogs/:id",function(req,res){
         }
         else
         {
-            res.redirect("/blogs/");
+            res.redirect("/blogs");
             
         }
         
